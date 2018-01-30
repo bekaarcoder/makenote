@@ -6,15 +6,22 @@
         <form method="post" action="/create">
           <div class="form-group">
             <label for="title">Note Title</label>
-            <input type="text" class="form-control" name="title" placeholder="Enter note title">
+            <input type="text" class="form-control" name="title" placeholder="Enter note title" value="{{{noteTitle}}}">
           </div>
           <div class="form-group">
             <label for="desc">Note Title</label>
-            <textarea type="text" class="form-control" name="desc" placeholder="Enter your note description..."></textarea>
+            <textarea type="text" class="form-control" name="desc" placeholder="Enter your note description...">{{{noteDesc}}}</textarea>
           </div>
           <button class="btn btn-primary" type="submit">Create</button>
         </form>
       </div>
     </div>
   </div>
+  {{#each errors}}
+  <div class="col-md-8 mt-5">
+    <div class="alert alert-danger text-center" role="alert">
+      {{{text}}}
+    </div>
+  </div>
+  {{/each}}
 </div>

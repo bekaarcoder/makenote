@@ -51,8 +51,22 @@ app.get('/notes/create', (req, res) => {
 
 // post - create a note
 app.post('/create', (req, res) => {
-  console.log(req.body);
-  res.send('ok');
+  let errors = [];
+  if(req.body.title == "") {
+    errors.push({text: "Note title is required."});
+    res.render('notes/create', {
+      errors: errors,
+      noteDesc: req.body.desc
+    });
+  } else if(req.body.desc == "") {
+    errors.push({text: "Note description is required."});
+    res.render('notes/create', {
+      errors: errors,
+      noteTitle: req.body.title
+    });
+  } else {
+    res.send('ok');
+  }
 });
 
 app.listen(port, () => {
