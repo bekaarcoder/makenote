@@ -65,7 +65,14 @@ app.post('/create', (req, res) => {
       noteTitle: req.body.title
     });
   } else {
-    res.send('ok');
+    const newNote = {
+      title: req.body.title,
+      details: req.body.desc
+    };
+    new Notes(newNote).save().then((note) => {
+      console.log(note);
+      res.redirect('/notes');
+    });
   }
 });
 
