@@ -31,14 +31,26 @@ app.use(bodyParser.json());
 // Routes - Index page
 app.get('/', (req, res) => {
   res.render('index', {
-    title: "MakeNote"
+    header: "MakeNote"
   });
 });
 
 // Routes - About page
 app.get('/about', (req, res) => {
   res.render('about', {
-    title: "About"
+    header: "About"
+  });
+});
+
+// Routes - Notes page
+app.get('/notes', (req, res) => {
+  Notes.find({}).sort({
+    date: 'desc'
+  }).then((notes) => {
+    res.render('notes/index', {
+      notes: notes,
+      header: "Notes"
+    });
   });
 });
 
