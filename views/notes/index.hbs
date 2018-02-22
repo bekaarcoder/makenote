@@ -6,6 +6,17 @@
       <div class="card-body">
         <h4>{{title}}</h4>
         <p>{{details}}</p>
+        <div class="row justify-content-end">
+        	<div class="col-md-auto" style="padding-right: 0px;">
+        		<a href="/notes/edit/{{id}}" class="btn btn-sm btn-primary">Edit</a>
+        	</div>
+        	<div class="col-md-auto">
+        		<form method="post" action="/notes/{{id}}?_method=DELETE">
+		        	<input type="hidden" name="_method" value="DELETE">
+		        	<input type="submit" class="btn btn-sm btn-danger" value="Delete">
+		        </form>
+        	</div>
+        </div>
       </div>
     </div>
   </div>

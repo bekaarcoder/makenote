@@ -2,6 +2,7 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
 
 const app = express();
 const port = 5000;
@@ -27,6 +28,9 @@ app.set('view engine', '.hbs');
 // body-parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+// method-override middleware
+app.use(methodOverride('_method'));
 
 // Routes - Index page
 app.get('/', (req, res) => {
@@ -61,6 +65,18 @@ app.get('/notes/create', (req, res) => {
   });
 });
 
+// Routes - Edit page
+app.get('/notes/edit/:id', (req, res) => {
+  Notes.findOne({
+    _id: req.params.id
+  }).then((note) => {
+    res.render('notes/edit', {
+      title: 'Edit Note',
+      note: note
+    });
+  });
+});
+
 // post - create a note
 app.post('/create', (req, res) => {
   let errors = [];
@@ -86,6 +102,28 @@ app.post('/create', (req, res) => {
       res.redirect('/notes');
     });
   }
+});
+
+// Updating note
+app.put('/notes/:id', (req, res) => {
+  Notes.findOne({
+    _id: req.params.id
+  }).then((note) => {
+    note.title = req.body.title;
+    note.details = req.body.desc;
+    note.save().then((note) => {
+      res.redirect('/notes');
+    });
+  });
+});
+
+// deleting note
+app.delete('/notes/:id', (req, res) => {
+  Notes.remove({
+    _id: req.params.id
+  }).then(() => {
+    res.redirect('/notes');
+  });
 });
 
 app.listen(port, () => {
