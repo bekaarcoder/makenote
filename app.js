@@ -9,16 +9,16 @@ const session = require('express-session');
 const app = express();
 const port = 5000;
 
+// load routes
+const notes = require('./routes/notes');
+const users = require('./routes/users');
+
 // mongodb connection
 mongoose.connect('mongodb://localhost/makenote-db').then(() => {
   console.log("MongoDb is connected...");
 }).catch((err) => {
   console.log(err);
 });
-
-// load notes model
-require('./models/Notes');
-const Notes = mongoose.model('notes');
 
 // Template Engine
 app.engine('.hbs', exphbs({
@@ -65,88 +65,9 @@ app.get('/about', (req, res) => {
   });
 });
 
-// Routes - Notes page
-app.get('/notes', (req, res) => {
-  Notes.find({}).sort({
-    date: 'desc'
-  }).then((notes) => {
-    res.render('notes/index', {
-      notes: notes,
-      header: "Notes"
-    });
-  });
-});
-
-// Routes - Add page
-app.get('/notes/create', (req, res) => {
-  res.render('notes/create', {
-    title: 'Create Note'
-  });
-});
-
-// Routes - Edit page
-app.get('/notes/edit/:id', (req, res) => {
-  Notes.findOne({
-    _id: req.params.id
-  }).then((note) => {
-    res.render('notes/edit', {
-      title: 'Edit Note',
-      note: note
-    });
-  });
-});
-
-// post - create a note
-app.post('/create', (req, res) => {
-  let errors = [];
-  if(req.body.title == "") {
-    errors.push({text: "Note title is required."});
-    res.render('notes/create', {
-      errors: errors,
-      noteDesc: req.body.desc
-    });
-  } else if(req.body.desc == "") {
-    errors.push({text: "Note description is required."});
-    res.render('notes/create', {
-      errors: errors,
-      noteTitle: req.body.title
-    });
-  } else {
-    const newNote = {
-      title: req.body.title,
-      details: req.body.desc
-    };
-    new Notes(newNote).save().then((note) => {
-      console.log(note);
-      req.flash('success_msg', 'Note has been created successfully.');
-      res.redirect('/notes');
-    });
-  }
-});
-
-// Updating note
-app.put('/notes/:id', (req, res) => {
-  Notes.findOne({
-    _id: req.params.id
-  }).then((note) => {
-    note.title = req.body.title;
-    note.details = req.body.desc;
-    note.save().then((note) => {
-      req.flash('success_msg', 'Note has been updated successfully.');
-      res.redirect('/notes');
-    });
-  });
-});
-
-// deleting note
-app.delete('/notes/:id', (req, res) => {
-  Notes.remove({
-    _id: req.params.id
-  }).then(() => {
-    req.flash('success_msg', 'Note has been deleted successfully.');
-    res.redirect('/notes');
-  });
-});
+// use routes
+app.use('/notes', notes);
+app.use('/users', users);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
