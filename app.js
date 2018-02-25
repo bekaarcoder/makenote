@@ -1,5 +1,7 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
+const expressValidator = require('express-validator');
+const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
@@ -30,6 +32,12 @@ app.set('view engine', '.hbs');
 // body-parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+// express-validator midleware
+app.use(expressValidator());
+
+// to access static folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 // method-override middleware
 app.use(methodOverride('_method'));
