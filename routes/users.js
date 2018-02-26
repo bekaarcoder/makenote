@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+// const passport = require('passport');
+
+// load User model
+require('../models/User');
+const User = mongoose.model('users'); 
 
 // login route
 router.get('/login', (req, res) => {
@@ -31,8 +37,34 @@ router.post('/register', (req, res) => {
 				error: errors[0]
 			});
 		}	else {
-			console.log('No');
-			return false;
+			User.findOne({
+				email: email
+			}).then((user) => {
+				if(user) {
+					req.flash('err_msg', 'Email is already registered.');
+					res.redirect('/users/register');
+				} else {
+					const newUser = {
+						username: username,
+						email: email,
+						password: password
+					};
+
+					bcrypt.genSalt(10, (err, salt) => {
+						bcrypt.hash(newUser.password, salt, (err, hash) => {
+							if(err) throw err;
+							newUser.password = hash;
+							new User(newUser).save().then((user) => {
+								req.flash('success_msg', 'You have successfully registered your account.');
+								res.redirect('/users/login');
+							}).catch((err) => {
+								console.log(err);
+								return;
+							});
+						});
+					});
+				}
+			});
 		}
 });
 
