@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const {ensureAuthenticated} = require('../helpers/auth');
 
 // load notes model
 require('../models/Notes');
 const Notes = mongoose.model('notes');
 
 // Routes - Notes page
-router.get('/', (req, res) => {
+router.get('/', ensureAuthenticated, (req, res) => {
   Notes.find({}).sort({
     date: 'desc'
   }).then((notes) => {
@@ -19,14 +20,14 @@ router.get('/', (req, res) => {
 });
 
 // Routes - Add page
-router.get('/create', (req, res) => {
+router.get('/create', ensureAuthenticated, (req, res) => {
   res.render('notes/create', {
     title: 'Create Note'
   });
 });
 
 // Routes - Edit page
-router.get('/edit/:id', (req, res) => {
+router.get('/edit/:id', ensureAuthenticated, (req, res) => {
   Notes.findOne({
     _id: req.params.id
   }).then((note) => {
@@ -38,7 +39,7 @@ router.get('/edit/:id', (req, res) => {
 });
 
 // post - create a note
-router.post('/create', (req, res) => {
+router.post('/create', ensureAuthenticated, (req, res) => {
   let errors = [];
   if(req.body.title == "") {
     errors.push({text: "Note title is required."});
@@ -66,7 +67,7 @@ router.post('/create', (req, res) => {
 });
 
 // Updating note
-router.put('/:id', (req, res) => {
+router.put('/:id', ensureAuthenticated, (req, res) => {
   Notes.findOne({
     _id: req.params.id
   }).then((note) => {
@@ -80,7 +81,7 @@ router.put('/:id', (req, res) => {
 });
 
 // deleting note
-router.delete('/:id', (req, res) => {
+router.delete('/:id', ensureAuthenticated, (req, res) => {
   Notes.remove({
     _id: req.params.id
   }).then(() => {
