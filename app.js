@@ -4,6 +4,7 @@ const expressValidator = require('express-validator');
 const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 const methodOverride = require('method-override');
 const flash = require('connect-flash');
 const session = require('express-session');
@@ -14,6 +15,9 @@ const port = 5000;
 // load routes
 const notes = require('./routes/notes');
 const users = require('./routes/users');
+
+// Passport config
+require('./config/passport')(passport);
 
 // mongodb connection
 mongoose.connect('mongodb://localhost/makenote-db').then(() => {
@@ -49,6 +53,10 @@ app.use(session({
   saveUninitialized: true
 }));
 
+// passport middleware - always put after session middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 // connect-flash middleware
 app.use(flash());
 
@@ -56,6 +64,8 @@ app.use(flash());
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.err_msg = req.flash('err_msg');
+  res.locals.error = req.flash('error');
+  res.locals.user = req.user || null;
   next();
 });
 

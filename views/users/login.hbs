@@ -1,12 +1,21 @@
+{{#if error}}
+<div class="row justify-content-center">
+	<div class="col-md-6 text-center">
+		<div class="alert alert-danger text-center" role="alert">
+      {{error}}
+    </div>
+	</div>
+</div>
+{{/if}}
 <div class="row justify-content-center">
 	<div class="col-md-6">
 		<div class="card mt-5">
 			<div class="card-body">
 				<h3 class="text-center mb-3">Account Login</h3>
-				<form>
+				<form method="post" action="/users/login">
 					<div class="form-group">
-						<label for="username"><strong>Username</strong></label>
-						<input type="text" name="username" class="form-control">
+						<label for="email"><strong>Username</strong></label>
+						<input type="text" name="email" class="form-control">
 					</div>
 					<div class="form-group">
 						<label for="password"><strong>Password</strong></label>
