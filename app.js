@@ -10,7 +10,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 // load routes
 const notes = require('./routes/notes');
@@ -19,8 +19,11 @@ const users = require('./routes/users');
 // Passport config
 require('./config/passport')(passport);
 
+// database configue
+const db = require('./config/database');
+
 // mongodb connection
-mongoose.connect('mongodb://localhost/makenote-db').then(() => {
+mongoose.connect(db.mongoURI).then(() => {
   console.log("MongoDb is connected...");
 }).catch((err) => {
   console.log(err);
